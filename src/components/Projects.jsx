@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FiGithub, FiExternalLink, FiLoader, FiAlertCircle } from 'react-icons/fi';
 
+const API_URL = process.env.REACT_APP_API_URL || '';
+
 const categoryColors = {
   'AI/ML': { bg: 'rgba(108,99,255,0.15)', border: 'rgba(108,99,255,0.4)', text: '#6c63ff' },
   'IoT':   { bg: 'rgba(0,230,118,0.1)',   border: 'rgba(0,230,118,0.35)',  text: '#00e676' },
@@ -30,7 +32,6 @@ function ProjectCard({ project }) {
         position: 'relative', overflow: 'hidden'
       }}
     >
-      {/* Featured badge */}
       {project.featured && (
         <div style={{
           position: 'absolute', top: '12px', right: '12px',
@@ -43,7 +44,6 @@ function ProjectCard({ project }) {
         </div>
       )}
 
-      {/* Header row */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <span style={{
           padding: '0.3rem 0.8rem', borderRadius: '50px',
@@ -67,7 +67,6 @@ function ProjectCard({ project }) {
         </span>
       </div>
 
-      {/* Title + Year */}
       <div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
           <h3 style={{
@@ -87,7 +86,6 @@ function ProjectCard({ project }) {
         )}
       </div>
 
-      {/* Description */}
       <p style={{
         color: '#9090b0', fontSize: '0.88rem',
         lineHeight: 1.7, flex: 1
@@ -95,7 +93,6 @@ function ProjectCard({ project }) {
         {project.description}
       </p>
 
-      {/* Tags */}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
         {project.tags?.map(tag => (
           <span key={tag} style={{
@@ -109,7 +106,6 @@ function ProjectCard({ project }) {
         ))}
       </div>
 
-      {/* Links */}
       {(project.githubLink || project.liveLink) && (
         <div style={{ display: 'flex', gap: '0.75rem', paddingTop: '0.5rem', borderTop: '1px solid #2a2a4a' }}>
           {project.githubLink && (
@@ -154,12 +150,10 @@ export default function Projects() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeFilter, setActiveFilter] = useState('All');
-  const [seeded, setSeeded] = useState(false);
 
   const seedAndFetch = async () => {
     try {
-      await axios.post('/api/projects/seed');
-      setSeeded(true);
+      await axios.post(`${API_URL}/api/projects/seed`); // ← FIXED
     } catch (err) {
       console.log('Seed error:', err.message);
     }
@@ -170,7 +164,7 @@ export default function Projects() {
       setLoading(true);
       setError(null);
       const params = category !== 'All' ? { category } : {};
-      const res = await axios.get('/api/projects', { params });
+      const res = await axios.get(`${API_URL}/api/projects`, { params }); // ← FIXED
       setProjects(res.data);
     } catch (err) {
       setError('Could not load projects. Please make sure the backend is running.');
@@ -198,7 +192,6 @@ export default function Projects() {
         <h2 className="section-title">Personal Projects</h2>
         <p className="section-subtitle">Things I've built along the way</p>
 
-        {/* Filter Tabs */}
         <div style={{
           display: 'flex', gap: '0.6rem',
           justifyContent: 'center', flexWrap: 'wrap',
@@ -222,7 +215,6 @@ export default function Projects() {
           ))}
         </div>
 
-        {/* Loading State */}
         {loading && (
           <div style={{
             display: 'flex', justifyContent: 'center',
@@ -235,7 +227,6 @@ export default function Projects() {
           </div>
         )}
 
-        {/* Error State */}
         {error && !loading && (
           <div style={{
             display: 'flex', flexDirection: 'column',
@@ -259,7 +250,6 @@ export default function Projects() {
           </div>
         )}
 
-        {/* Projects Grid */}
         {!loading && !error && (
           <>
             <div style={{
@@ -278,7 +268,6 @@ export default function Projects() {
               </p>
             )}
 
-            {/* GitHub CTA */}
             <div style={{ textAlign: 'center', marginTop: '3rem' }}>
               <a
                 href="https://github.com/ahsantayyab"
