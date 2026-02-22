@@ -72,7 +72,7 @@ export default function Contact() {
 
     setStatus('loading');
     try {
-      await axios.post('/api/contact', form);
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/contact`, form);
       setStatus('success');
       setForm(initialForm);
       setTimeout(() => setStatus(null), 5000);
